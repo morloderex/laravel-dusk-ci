@@ -10,20 +10,18 @@ ENV SCREEN_RESOLUTION 1920x720x24
 ENV CHROMEDRIVER_PORT 9515
 
 ENV TMPDIR=/tmp
-
-RUN apt-get update -y
-RUN apt-get install -yq apt-utils zip unzip
-RUN apt-get install -yq openssl language-pack-en-base
-RUN apt-get install -yq software-properties-common curl
+RUN apt-get update && apt-get install -yq apt-utils zip unzip
+RUN apt-get update && apt-get install -yq openssl language-pack-en-base
+RUN apt-get update && apt-get install -yq software-properties-common curl
 RUN add-apt-repository ppa:ondrej/php
 RUN sed -i'' 's/archive\.ubuntu\.com/us\.archive\.ubuntu\.com/' /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get upgrade -yq
-RUN apt-get install -yq libgd-tools
-RUN apt-get install -yq --fix-missing php7.1-fpm php7.1-cli php7.1-xml php7.1-zip php7.1-curl php7.1-bcmath php7.1-json \
+RUN apt-get update && apt-get install -yq libgd-tools
+RUN apt-get update && apt-get install -yq --fix-missing php7.1-fpm php7.1-cli php7.1-xml php7.1-zip php7.1-curl php7.1-bcmath php7.1-json \
     php7.1-mbstring php7.1-pgsql php7.1-mysql php7.1-mcrypt php7.1-gd php-xdebug php-imagick imagemagick nginx
 
-RUN apt-get install -yq mc lynx mysql-client bzip2 make g++
+RUN apt-get update && apt-get install -yq mc lynx mysql-client bzip2 make g++
 
 ENV COMPOSER_HOME /usr/local/share/composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -49,7 +47,7 @@ ADD commands/configure-laravel.sh /usr/bin/configure-laravel
 RUN chmod +x /usr/bin/configure-laravel
 
 RUN \
-  apt-get install -yq xvfb gconf2 fonts-ipafont-gothic xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base \
+  apt-get update && apt-get install -yq xvfb gconf2 fonts-ipafont-gothic xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base \
     xfonts-scalable \
   && chmod +x /etc/init.d/xvfb \
   && CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` \
@@ -64,12 +62,11 @@ RUN \
   && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
   && apt-get -yqq update && apt-get -yqq install google-chrome-stable x11vnc
 
-RUN apt-get install -yq apt-transport-https
-RUN apt-get install -yq  python-software-properties
+RUN apt-get update && apt-get install -yq apt-transport-https
+RUN apt-get update && apt-get install -yq  python-software-properties
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-RUN apt-get update
-RUN apt-get install -yq nodejs
-RUN apt-get install -yq git
+RUN apt-get update && apt-get install -yq nodejs
+RUN apt-get update && apt-get install -yq git
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
