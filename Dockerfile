@@ -1,6 +1,6 @@
 
 FROM ubuntu:xenial
-MAINTAINER Chilio 
+MAINTAINER Michael
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
@@ -12,14 +12,15 @@ ENV CHROMEDRIVER_PORT 9515
 ENV TMPDIR=/tmp
 RUN apt-get update && apt-get install -yq apt-utils zip unzip
 RUN apt-get update && apt-get install -yq openssl language-pack-en-base
-RUN apt-get update && apt-get install -yq software-properties-common curl
+RUN apt-get update && apt-get install -yq software-properties-common curl sudo
 RUN add-apt-repository ppa:ondrej/php
+RUN add-apt-repository ppa:nginx/development
 RUN sed -i'' 's/archive\.ubuntu\.com/us\.archive\.ubuntu\.com/' /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get upgrade -yq
 RUN apt-get update && apt-get install -yq libgd-tools
 RUN apt-get update && apt-get install -yq --fix-missing php7.1-fpm php7.1-cli php7.1-xml php7.1-zip php7.1-curl php7.1-bcmath php7.1-json \
-    php7.1-mbstring php7.1-pgsql php7.1-mysql php7.1-mcrypt php7.1-gd php-xdebug php-imagick imagemagick nginx
+    php7.1-mbstring php7.1-pgsql php7.1-mysql php7.1-mcrypt php7.1-gd php7.1-soap php7.1-sqlite php-xdebug php-imagick imagemagick nginx
 
 RUN apt-get update && apt-get install -yq mc lynx mysql-client bzip2 make g++
 
@@ -62,47 +63,25 @@ RUN \
   && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
   && apt-get -yqq update && apt-get -yqq install google-chrome-stable x11vnc
 
-RUN apt-get update && apt-get install -yq apt-transport-https
-RUN apt-get update && apt-get install -yq  python-software-properties
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-RUN apt-get update && apt-get install -yq nodejs
-RUN apt-get update && apt-get install -yq git
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -yq yarn
-RUN yarn global add bower --network-concurrency 1
 RUN wget https://phar.phpunit.de/phpunit.phar
 RUN chmod +x phpunit.phar
 RUN mv phpunit.phar /usr/local/bin/phpunit
-
-RUN npm install -g node-gyp
-RUN npm install -g node-sass
-RUN npm install -g gulp
-
 RUN apt-get install -y supervisor
-
 ADD configs/supervisord.conf /etc/supervisor/supervisord.conf
+ADD configs/nginx-default-site /etc/nginx/sites-available/default
 
-ADD configs/nginx-default-site /etc/nginx/sites-available/default 
+ADD configs/hosts /etc/hosts
 
 VOLUME [ "/var/log/supervisor" ]
 
+RUN apt-get -y upgrade
+RUN apt-get -y autoremove
 RUN apt-get -yq clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN apt-get upgrade
-RUN apt-get autoremove
 
 RUN php --version
-RUN yarn --version
+RUN php -m
 RUN nginx -v
-RUN nodejs --version
-RUN npm --version
-RUN bower --version
 RUN phpunit --version
-RUN node-sass --version
-RUN gulp --version
 
 EXPOSE 80 9515
 

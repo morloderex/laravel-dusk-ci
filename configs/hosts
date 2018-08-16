@@ -1,0 +1,11 @@
+127.0.0.1 lite.nappsaas.test
+127.0.0.1 basic.nappsaas.test
+127.0.0.1 professional.nappsaas.test
+127.0.0.1 enterprise.nappsaas.test
+127.0.0.1 testingenv.nappsaas.test
+127.0.0.1 partnerdemo.nappsaas.test
+127.0.0.1 api.nappsaas.test
+
+127.0.0.1       localhost
+255.255.255.255 broadcasthost
+::1             localhost
